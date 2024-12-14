@@ -1,0 +1,858 @@
+{
+	"info": {
+		"_postman_id": "b1f13a47-5371-4f85-b40a-3c38555525aa",
+		"name": "ReviewHood",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24441218"
+	},
+	"item": [
+		{
+			"name": "Actors",
+			"item": [
+				{
+					"name": "Get All Actors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/actors?limit=3&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"actors"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "3"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Actor by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/actors/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"actors",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "c890c808-6092-49f1-b38e-07967ffc065f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Actor",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Leonardo DiCaprio",
+									"type": "text"
+								},
+								{
+									"key": "age",
+									"value": "55",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "male",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/actors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"actors"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Actor",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "raju",
+									"type": "text"
+								},
+								{
+									"key": "age",
+									"value": "55",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "male",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/actors/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"actors",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "c890c808-6092-49f1-b38e-07967ffc065f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Actor",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/actors/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"actors",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "c890c808-6092-49f1-b38e-07967ffc065f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Movies of Actor",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/actors/:id/movies",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"actors",
+								":id",
+								"movies"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ac49e916-0831-4756-b93f-b3f3b81cda06"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Movies",
+			"item": [
+				{
+					"name": "Get All Movies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/movies?limit=6&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"movies"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "6"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Movie",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Dhoom\",\n    \"rating\": 4.9,\n    \"release_date\": \"2024-12-14\",\n    \"genres\": [\n        \"0fdffae8-ff84-4f3b-82bd-ec338a23f3a2\",\n        \"359b55bd-986f-4bc0-87d2-71ac85860448\"\n    ],\n    \"actors\": [\n        \"ac49e916-0831-4756-b93f-b3f3b81cda06\",\n        \"252c05ce-2446-4e5f-ba34-45ecc91ab543\",\n        \"d7e4b7ab-afd7-4173-8bb3-0abe57727db2\"\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/movies",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"movies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Movie by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/movies/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"movies",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2aac2a00-e314-4c4e-9860-d0d3201058f0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Movie",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Dhoom2\",\n    \"rating\": 4.9,\n    \"release_date\": \"2024-12-14\",\n    \"genres\": [\n        \"0fdffae8-ff84-4f3b-82bd-ec338a23f3a2\",\n        \"359b55bd-986f-4bc0-87d2-71ac85860448\"\n    ],\n    \"actors\": [\n        \"ac49e916-0831-4756-b93f-b3f3b81cda06\",\n        \"d7e4b7ab-afd7-4173-8bb3-0abe57727db2\"\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/movies/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"movies",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2aac2a00-e314-4c4e-9860-d0d3201058f0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Movie",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/movies/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"movies",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "2aac2a00-e314-4c4e-9860-d0d3201058f0"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Genres",
+			"item": [
+				{
+					"name": "Get All Genres",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/genres?limit=3&offset=0",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"genres"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "3"
+								},
+								{
+									"key": "offset",
+									"value": "0"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Genre",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "old",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/genres",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"genres"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Genre by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/genres/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"genres",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "487331a3-22c1-4566-8a21-9a9107ffbf5d"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Genre",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "sadabahar",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/genres/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"genres",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "487331a3-22c1-4566-8a21-9a9107ffbf5d"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Genre",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/genres/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"genres",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "487331a3-22c1-4566-8a21-9a9107ffbf5d"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Movies by Genre",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/genres/:id/movies",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"genres",
+								":id",
+								"movies"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "0fdffae8-ff84-4f3b-82bd-ec338a23f3a2"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Review",
+			"item": [
+				{
+					"name": "Get All Reviews of Movie",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/movies/:movie_id/reviews",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"movies",
+								":movie_id",
+								"reviews"
+							],
+							"variable": [
+								{
+									"key": "movie_id",
+									"value": "8ab2b3a7-5588-4b60-94dd-a65a4b9c5b22"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rating\": 3,\n    \"details\": \"I loved it. akdjb.  asd  aksgd ka/\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/movies/:movie_id/reviews",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"movies",
+								":movie_id",
+								"reviews"
+							],
+							"variable": [
+								{
+									"key": "movie_id",
+									"value": "8ab2b3a7-5588-4b60-94dd-a65a4b9c5b22"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Movie Review byID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/movies/:movie_id/reviews/:review_id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"movies",
+								":movie_id",
+								"reviews",
+								":review_id"
+							],
+							"variable": [
+								{
+									"key": "movie_id",
+									"value": "8ab2b3a7-5588-4b60-94dd-a65a4b9c5b22"
+								},
+								{
+									"key": "review_id",
+									"value": "8055fa22-157d-4ac0-ad4f-ac857f2d9353"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rating\": 3,\n    \"details\": \"I loved it.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/movies/:movie_id/reviews/:review_id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"movies",
+								":movie_id",
+								"reviews",
+								":review_id"
+							],
+							"variable": [
+								{
+									"key": "movie_id",
+									"value": "8ab2b3a7-5588-4b60-94dd-a65a4b9c5b22"
+								},
+								{
+									"key": "review_id",
+									"value": "8055fa22-157d-4ac0-ad4f-ac857f2d9353"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/movies/:movie_id/reviews/:review_id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"movies",
+								":movie_id",
+								"reviews",
+								":review_id"
+							],
+							"variable": [
+								{
+									"key": "movie_id",
+									"value": "8ab2b3a7-5588-4b60-94dd-a65a4b9c5b22"
+								},
+								{
+									"key": "review_id",
+									"value": "23620de0-e205-4402-840b-641baed23da8"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Get Token",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "y",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "y",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/token",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "jwt",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzM0MTkzMDk1LCJpYXQiOjE3MzQxOTI3OTUsImp0aSI6Ijk5OTljNDM5NTE1NTQ2NmE5OTQyOGMxODA0NDM1ZmEwIiwidXNlcl9pZCI6MX0.2Pte8YODU-TnJkKmq9N0iLoCGEnY30hmW3fAKGubPLg",
+			"type": "default"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
