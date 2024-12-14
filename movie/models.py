@@ -78,3 +78,6 @@ class Review(models.Model):
     )
     details = models.TextField(blank=True, default="")
     created_on = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("movie", "user")
