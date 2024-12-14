@@ -1,3 +1,6 @@
+from typing import Optional
+
+from django.db.models.manager import BaseManager
 from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
@@ -6,16 +9,23 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from movie.models import Actor, Genre, Movie
-from movie.serializers import ActorSerializer, GenreSerializer, MovieSerializer
+from movie.models import Actor, Genre, Movie, Review
+from movie.serializers import (
+    ActorSerializer,
+    GenreSerializer,
+    MovieSerializer,
+    ReviewSerializer,
+)
 
 
 class ActorListCreateView(APIView):
     def get(self, request: Request) -> Response:
-        actors = Actor.objects.all()
+        actors: BaseManager[Actor] = Actor.objects.all()
         paginator = LimitOffsetPagination()
-        paginated_actors = paginator.paginate_queryset(actors, request)
-        serializer = ActorSerializer(paginated_actors, many=True)
+        paginated_genre: Optional[list[Actor]] = paginator.paginate_queryset(
+            actors, request
+        )
+        serializer = ActorSerializer(paginated_genre, many=True)
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request: Request) -> Response:
@@ -29,7 +39,7 @@ class ActorListCreateView(APIView):
 class ActorDetailView(APIView):
     def get(self, request: Request, pk: str) -> Response:
         try:
-            actor = Actor.objects.get(id=pk)
+            actor: Actor = Actor.objects.get(id=pk)
         except Actor.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = ActorSerializer(actor)
@@ -37,7 +47,7 @@ class ActorDetailView(APIView):
 
     def put(self, request: Request, pk: str) -> Response:
         try:
-            actor = Actor.objects.get(id=pk)
+            actor: Actor = Actor.objects.get(id=pk)
         except Actor.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -49,7 +59,7 @@ class ActorDetailView(APIView):
 
     def delete(self, request: Request, pk: str) -> Response:
         try:
-            actor = Actor.objects.get(id=pk)
+            actor: Actor = Actor.objects.get(id=pk)
         except Actor.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -60,10 +70,10 @@ class ActorDetailView(APIView):
 class MoviesByActorListView(ListAPIView):
     serializer_class = MovieSerializer
 
-    def get_queryset(self):
-        actor_id = self.kwargs.get("pk")  # Retrieve actor_id from URL
+    def get_queryset(self) -> BaseManager[Movie]:
+        actor_id: str = self.kwargs.get("pk")  # Retrieve actor_id from URL
         try:
-            actor = Actor.objects.get(id=actor_id)
+            actor: Actor = Actor.objects.get(id=actor_id)
         except Actor.DoesNotExist:
             raise NotFound("Actor not found")
         return actor.movies.all()
@@ -72,10 +82,12 @@ class MoviesByActorListView(ListAPIView):
 class GenreListCreateView(APIView):
 
     def get(self, request: Request) -> Response:
-        genre = Genre.objects.all()
+        genre: BaseManager[Genre] = Genre.objects.all()
         paginator = LimitOffsetPagination()
-        paginated_actors = paginator.paginate_queryset(genre, request)
-        serializer = GenreSerializer(paginated_actors, many=True)
+        paginated_genre: Optional[list[Genre]] = paginator.paginate_queryset(
+            genre, request
+        )
+        serializer = GenreSerializer(paginated_genre, many=True)
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request: Request) -> Response:
@@ -89,7 +101,7 @@ class GenreListCreateView(APIView):
 class GenreDetailView(APIView):
     def get(self, request: Request, pk: str) -> Response:
         try:
-            genre = Genre.objects.get(id=pk)
+            genre: Genre = Genre.objects.get(id=pk)
         except Genre.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = GenreSerializer(genre)
@@ -97,7 +109,7 @@ class GenreDetailView(APIView):
 
     def put(self, request: Request, pk: str) -> Response:
         try:
-            genre = Genre.objects.get(id=pk)
+            genre: Genre = Genre.objects.get(id=pk)
         except Genre.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -109,7 +121,7 @@ class GenreDetailView(APIView):
 
     def delete(self, request: Request, pk: str) -> Response:
         try:
-            genre = Genre.objects.get(id=pk)
+            genre: Genre = Genre.objects.get(id=pk)
         except Genre.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -120,7 +132,7 @@ class GenreDetailView(APIView):
 class MoviesByGenreListView(ListAPIView):
     serializer_class = MovieSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> BaseManager[Movie]:
         genre_id = self.kwargs.get("pk")
         try:
             genre = Genre.objects.get(id=genre_id)
@@ -132,14 +144,18 @@ class MoviesByGenreListView(ListAPIView):
 class MovieListCreateView(APIView):
 
     def get(self, request: Request) -> Response:
-        movies = Movie.objects.all()
+        movies: BaseManager[Movie] = Movie.objects.all()
         paginator = LimitOffsetPagination()
-        paginated_actors = paginator.paginate_queryset(movies, request)
-        serializer = MovieSerializer(paginated_actors, many=True)
+        paginated_movies: Optional[list[Movie]] = paginator.paginate_queryset(
+            movies, request
+        )
+        serializer = MovieSerializer(paginated_movies, many=True)
         return paginator.get_paginated_response(serializer.data)
 
     def post(self, request: Request) -> Response:
-        serializer = MovieSerializer(data=request.data)
+        movie_data = request.data
+        movie_data["rating"] = 0
+        serializer = MovieSerializer(data=movie_data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -150,7 +166,7 @@ class MovieDetailView(RetrieveUpdateDestroyAPIView):
 
     def get(self, request: Request, pk: str) -> Response:
         try:
-            movie = Movie.objects.get(id=pk)
+            movie: Movie = Movie.objects.get(id=pk)
         except Movie.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = MovieSerializer(movie)
@@ -158,7 +174,7 @@ class MovieDetailView(RetrieveUpdateDestroyAPIView):
 
     def put(self, request: Request, pk: str) -> Response:
         try:
-            movie = Movie.objects.get(id=pk)
+            movie: Movie = Movie.objects.get(id=pk)
         except Movie.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -170,9 +186,95 @@ class MovieDetailView(RetrieveUpdateDestroyAPIView):
 
     def delete(self, request: Request, pk: str) -> Response:
         try:
-            movie = Movie.objects.get(id=pk)
+            movie: Movie = Movie.objects.get(id=pk)
         except Movie.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         movie.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ReviewsByMovieListView(APIView):
+    def get(self, request: Request, pk: str) -> Response:
+        try:
+            movie: Movie = Movie.objects.get(id=pk)
+        except Movie.DoesNotExist:
+            raise NotFound("Genre not found")
+
+        movies: BaseManager[Review] = movie.reviews.all()
+        paginator = LimitOffsetPagination()
+        paginated_movies: Optional[list[Movie]] = paginator.paginate_queryset(movies)
+        serializer = MovieSerializer(paginated_movies)
+        return Response(paginator.get_paginated_response(serializer))
+
+    def post(self, request: Request, pk: str) -> Response:
+        try:
+            movie: Movie = Movie.objects.get(id=pk)
+        except Movie.DoesNotExist:
+            raise NotFound("Genre not found")
+        review_data = request.data
+        review_data["user"] = request.user
+        review_data["movie"] = movie
+
+        serializer = ReviewSerializer(data=review_data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ReviewByMovieDetailView(APIView):
+
+    def get(self, request: Request, movie_pk: str, review_pk: str) -> Response:
+        try:
+            movie: Movie = Movie.objects.get(id=movie_pk)
+        except Movie.DoesNotExist:
+            return Response("Movie id not Found", status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            review = movie.reviews.get(id=review_pk)
+        except Review.DoesNotExist:
+            return Response("Review id not Found", status=status.HTTP_404_NOT_FOUND)
+
+        serializer = ReviewSerializer(review)
+        return Response(serializer.data)
+
+    def put(self, request: Request, movie_pk: str, review_pk: str) -> Response:
+        try:
+            movie: Movie = Movie.objects.get(id=movie_pk)
+        except Movie.DoesNotExist:
+            return Response("Movie id not Found", status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            review = movie.reviews.get(id=review_pk)
+        except Review.DoesNotExist:
+            return Response("Review id not Found", status=status.HTTP_404_NOT_FOUND)
+
+        serializer = MovieSerializer(review, data=request.data)
+
+        if serializer.is_valid():
+            review = Review(**serializer.data)
+            if review.user != request.user:
+                return Response(status=status.HTTP_403_FORBIDDEN)
+
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request: Request, movie_pk: str, review_pk: str) -> Response:
+        try:
+            movie: Movie = Movie.objects.get(id=movie_pk)
+        except Movie.DoesNotExist:
+            return Response("Movie id not Found", status=status.HTTP_404_NOT_FOUND)
+
+        try:
+            review = movie.reviews.get(id=review_pk)
+        except Review.DoesNotExist:
+            return Response("Review id not Found", status=status.HTTP_404_NOT_FOUND)
+
+        if review.user != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        review.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -4,8 +4,15 @@ from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-
 # Create your models here.
+RATING_CHOICES = [
+    (1, "Very Poor"),
+    (2, "Poor"),
+    (3, "Average"),
+    (4, "Good"),
+    (5, "Excellent"),
+]
+
 class Genre(models.Model):
     id = models.UUIDField(
         primary_key=True,
@@ -38,6 +45,7 @@ class Actor(models.Model):
 
 
 class Movie(models.Model):
+
     id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
@@ -48,7 +56,7 @@ class Movie(models.Model):
         validators=[
             MinValueValidator(0.0),
             MaxValueValidator(5.0),
-        ]
+        ],
     )
     release_date = models.DateField()
     genres = models.ManyToManyField(Genre, related_name="movies")
@@ -70,11 +78,12 @@ class Review(models.Model):
         related_name="reviews",
     )
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="reviews")
-    rating = models.FloatField(
+    rating = models.IntegerField(
         validators=[
             MinValueValidator(0.0),
             MaxValueValidator(5.0),
-        ]
+        ],
+        choices=RATING_CHOICES,
     )
     details = models.TextField(blank=True, default="")
     created_on = models.DateTimeField(auto_now=True)

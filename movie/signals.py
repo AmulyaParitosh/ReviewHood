@@ -6,14 +6,15 @@ from movie.models import Movie, Review
 
 @receiver(post_save, sender=Review)
 def update_movie_rating(
-    sender: type[Review], review: Review, created: bool, **kwargs
+    sender: type[Review], instance: Review, created: bool, **kwargs
 ) -> None:
-    if not created:
-        return
-
-    movie = review.movie
+    movie: Movie = instance.movie
     reviews_on_movie: int = movie.reviews.count() - 1
-    movie.rating = ((movie.rating * reviews_on_movie) * review.rating) / (
-        reviews_on_movie + 1
-    )
+    if reviews_on_movie == 0:
+        movie.rating = instance.rating
+    else:
+        movie.rating = ((movie.rating * reviews_on_movie) + instance.rating) / (
+            reviews_on_movie + 1
+        )
+    print(movie.rating)
     movie.save()

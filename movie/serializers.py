@@ -22,7 +22,7 @@ class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = "__all__"
-        read_only_field = ("id",)
+        read_only_field = ("id", "rating")
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -30,4 +30,4 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         fields = "__all__"
-        read_only_field = ("id",)
+        read_only_field = ("id", "movie", "user")
