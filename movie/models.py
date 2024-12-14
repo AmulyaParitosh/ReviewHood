@@ -1,5 +1,6 @@
 import uuid
 
+from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -55,3 +56,25 @@ class Movie(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class Review(models.Model):
+    id = models.UUIDField(
+        primary_key=True,
+        default=uuid.uuid4,
+        editable=False,
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="reviews",
+    )
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name="reviews")
+    rating = models.FloatField(
+        validators=[
+            MinValueValidator(0.0),
+            MaxValueValidator(5.0),
+        ]
+    )
+    details = models.TextField(blank=True, default="")
+    created_on = models.DateTimeField(auto_now=True)
