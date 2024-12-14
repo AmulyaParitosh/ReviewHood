@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -19,6 +20,15 @@ from movie.serializers import (
 
 
 class ActorListCreateView(APIView):
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        elif self.request.method == "POST":
+            return [IsAdminUser()]
+
+        return super().get_permissions()
+
     def get(self, request: Request) -> Response:
         actors: BaseManager[Actor] = Actor.objects.all()
         paginator = LimitOffsetPagination()
@@ -37,6 +47,15 @@ class ActorListCreateView(APIView):
 
 
 class ActorDetailView(APIView):
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        elif self.request.method in ("PUT", "DELETE"):
+            return [IsAdminUser()]
+
+        return super().get_permissions()
+
     def get(self, request: Request, pk: str) -> Response:
         try:
             actor: Actor = Actor.objects.get(id=pk)
@@ -69,6 +88,7 @@ class ActorDetailView(APIView):
 
 class MoviesByActorListView(ListAPIView):
     serializer_class = MovieSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self) -> BaseManager[Movie]:
         actor_id: str = self.kwargs.get("pk")  # Retrieve actor_id from URL
@@ -80,6 +100,14 @@ class MoviesByActorListView(ListAPIView):
 
 
 class GenreListCreateView(APIView):
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        elif self.request.method == "POST":
+            return [IsAdminUser()]
+
+        return super().get_permissions()
 
     def get(self, request: Request) -> Response:
         genre: BaseManager[Genre] = Genre.objects.all()
@@ -99,6 +127,15 @@ class GenreListCreateView(APIView):
 
 
 class GenreDetailView(APIView):
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        elif self.request.method in ("PUT", "DELETE"):
+            return [IsAdminUser()]
+
+        return super().get_permissions()
+
     def get(self, request: Request, pk: str) -> Response:
         try:
             genre: Genre = Genre.objects.get(id=pk)
@@ -131,6 +168,7 @@ class GenreDetailView(APIView):
 
 class MoviesByGenreListView(ListAPIView):
     serializer_class = MovieSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self) -> BaseManager[Movie]:
         genre_id = self.kwargs.get("pk")
@@ -142,6 +180,14 @@ class MoviesByGenreListView(ListAPIView):
 
 
 class MovieListCreateView(APIView):
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        elif self.request.method == "POST":
+            return [IsAdminUser()]
+
+        return super().get_permissions()
 
     def get(self, request: Request) -> Response:
         movies: BaseManager[Movie] = Movie.objects.all()
@@ -163,6 +209,14 @@ class MovieListCreateView(APIView):
 
 
 class MovieDetailView(RetrieveUpdateDestroyAPIView):
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        elif self.request.method in ("PUT", "DELETE"):
+            return [IsAdminUser()]
+
+        return super().get_permissions()
 
     def get(self, request: Request, pk: str) -> Response:
         try:
@@ -195,6 +249,15 @@ class MovieDetailView(RetrieveUpdateDestroyAPIView):
 
 
 class ReviewsByMovieListView(APIView):
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        elif self.request.method == "POST":
+            return [IsAuthenticated()]
+
+        return super().get_permissions()
+
     def get(self, request: Request, pk: str) -> Response:
         try:
             movie: Movie = Movie.objects.get(id=pk)
@@ -203,18 +266,20 @@ class ReviewsByMovieListView(APIView):
 
         movies: BaseManager[Review] = movie.reviews.all()
         paginator = LimitOffsetPagination()
-        paginated_movies: Optional[list[Movie]] = paginator.paginate_queryset(movies)
-        serializer = MovieSerializer(paginated_movies)
-        return Response(paginator.get_paginated_response(serializer))
+        paginated_movies: Optional[list[Movie]] = paginator.paginate_queryset(
+            movies, request
+        )
+        serializer = ReviewSerializer(paginated_movies, many=True)
+        return paginator.get_paginated_response(serializer.data)
 
     def post(self, request: Request, pk: str) -> Response:
         try:
             movie: Movie = Movie.objects.get(id=pk)
         except Movie.DoesNotExist:
             raise NotFound("Genre not found")
-        review_data = request.data
-        review_data["user"] = request.user
-        review_data["movie"] = movie
+        review_data = dict(request.data)
+        review_data["user"] = request.user.pk
+        review_data["movie"] = movie.id
 
         serializer = ReviewSerializer(data=review_data)
         if serializer.is_valid():
@@ -224,6 +289,16 @@ class ReviewsByMovieListView(APIView):
 
 
 class ReviewByMovieDetailView(APIView):
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            return [AllowAny()]
+        elif self.request.method == "PUT":
+            return [IsAuthenticated()]
+        elif self.request.method == "DELETE":
+            return [IsAuthenticated()]
+
+        return super().get_permissions()
 
     def get(self, request: Request, movie_pk: str, review_pk: str) -> Response:
         try:
@@ -246,17 +321,20 @@ class ReviewByMovieDetailView(APIView):
             return Response("Movie id not Found", status=status.HTTP_404_NOT_FOUND)
 
         try:
-            review = movie.reviews.get(id=review_pk)
+            review: Review = movie.reviews.get(id=review_pk)
         except Review.DoesNotExist:
             return Response("Review id not Found", status=status.HTTP_404_NOT_FOUND)
 
-        serializer = MovieSerializer(review, data=request.data)
+        if review.user != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        review_data = dict(request.data)
+        review_data["user"] = request.user.pk
+        review_data["movie"] = movie.id
+
+        serializer = ReviewSerializer(review, data=review_data)
 
         if serializer.is_valid():
-            review = Review(**serializer.data)
-            if review.user != request.user:
-                return Response(status=status.HTTP_403_FORBIDDEN)
-
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
 
