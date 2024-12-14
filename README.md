@@ -41,7 +41,7 @@ ReviewHood is a REST API backend built with Django and Django REST Framework (DR
 ### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/reviewhood.git
+   git clone https://github.com/AmulyaParitosh/ReviewHood.git
    cd reviewhood
    ```
 
